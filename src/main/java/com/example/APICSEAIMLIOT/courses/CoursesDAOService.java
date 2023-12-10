@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,5 +30,10 @@ public class CoursesDAOService {
 	public Courses findCourseById(Integer id) {
 		Predicate<? super Courses > predicate = course -> course.getId().equals(id);
 		return courses.stream().filter(predicate).findFirst().orElse(null);
+	}
+	
+	public void deleteCoursesById(Integer id) {
+		Predicate<? super Courses> predicate = course -> course.getId().equals(id);
+		courses.removeIf(predicate);
 	}
 }
