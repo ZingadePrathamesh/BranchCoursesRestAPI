@@ -1,9 +1,12 @@
 package com.example.APICSEAIMLIOT.courses;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,10 +41,13 @@ public class CoursesController {
 	
 	//Gets you a course that matches the provided id
 	@GetMapping(path = "/courses/{courseId}")
-	public Courses getCourseById(@PathVariable Integer courseId) {
+	public EntityModel<Courses> getCourseById(@PathVariable Integer courseId) {
 		Optional<Courses> course = coursesJpaRepository.findById(courseId);
 		if(course == null) throw new CourseNotFoundException("id: "+ courseId);
-		return course.get();
+		EntityModel<Courses> entityModel = EntityModel.of(course.get());
+		WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).getCourses());
+		entityModel.add(link.withRel("All Courses:"));
+		return entityModel;
 	}
 	
 	
