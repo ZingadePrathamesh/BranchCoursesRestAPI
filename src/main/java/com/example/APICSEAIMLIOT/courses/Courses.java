@@ -1,15 +1,26 @@
 package com.example.APICSEAIMLIOT.courses;
 
+import org.hibernate.validator.constraints.Range;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
+@Entity
 public class Courses {
 	
-	private Integer id;
+	@Id
+	@GeneratedValue
+	private Integer courseId;
 	@Size(min = 2, message = "Enter atleast 2 Characters in name.")
+	
 	private String  name;
-	private Boolean isAIML;
+	
+	@Range(min = 1, max = 2)
+	private Integer branch;
 	
 	@Min(value = 1, message = "Value must be above 0!")
 	@Max(value = 8, message = "Value must be below 9!")
@@ -17,32 +28,41 @@ public class Courses {
 	
 	private Boolean isElective;
 	
-	public Courses(Integer id, String name, Boolean isAIML, Integer semester, Boolean isElective) {
+	public Courses() {
 		super();
-		this.id = id;
+	}
+	
+	public Courses(Integer courseId, String name, Integer branch, Integer semester, Boolean isElective) {
+		super();
+		this.courseId = courseId;
 		this.name = name;
-		this.isAIML = isAIML;
+		this.branch = branch;
 		this.semester = semester;
 		this.isElective = isElective;
 	}
 	
-	public Integer getId() {
-		return id;
+	
+	public Integer getCourseId() {
+		return courseId;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+
+	public void setCourseId(Integer courseId) {
+		this.courseId = courseId;
 	}
+
+	public Integer getBranch() {
+		return branch;
+	}
+
+	public void setBranch(Integer branch) {
+		this.branch = branch;
+	}
+	
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public Boolean getIsAIML() {
-		return isAIML;
-	}
-	public void setIsAIML(Boolean isAIML) {
-		this.isAIML = isAIML;
 	}
 	public Integer getSemester() {
 		return semester;
@@ -59,7 +79,7 @@ public class Courses {
 
 	@Override
 	public String toString() {
-		return "Courses [id=" + id + ", name=" + name + ", isAIML=" + isAIML + ", semester=" + semester
+		return "Courses [id=" + courseId + ", name=" + name + ", branch Code=" + branch + ", semester=" + semester
 				+ ", isElective=" + isElective + "]";
 	}
 	

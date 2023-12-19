@@ -40,6 +40,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	    return new ResponseEntity<Object>(errorDetails, HttpStatus.NOT_FOUND);
 	}
 	
+	//FOR HANDLING ERROR MESSAGE IN TIMES OF VALIDATION
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
 			MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -53,7 +54,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	    // Create an ErrorDetails object containing timestamp, error message, and request details.
 	    ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), errorMessage.toString(), request.getDescription(false));
 
-	    // Return a ResponseEntity with the error details and a status code of NOT_FOUND (404).
+	    // Return a ResponseEntity with the error details and a status code of BAD_REQUEST (400).
 	    return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
 	}
 

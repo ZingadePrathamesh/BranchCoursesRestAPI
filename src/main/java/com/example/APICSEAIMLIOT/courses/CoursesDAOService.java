@@ -12,13 +12,13 @@ public class CoursesDAOService {
 	static List<Courses> courses = new ArrayList<Courses>();
 	
 	static {
-		courses.add(new Courses(++coursesCount, "Computer Graphics", true, 3, false));
-		courses.add(new Courses(++coursesCount, "Data Structures", true, 3, false));
-		courses.add(new Courses(++coursesCount, "Java OOPs", true, 3, false));
+		courses.add(new Courses(++coursesCount, "Computer Graphics", 1, 3, false));
+		courses.add(new Courses(++coursesCount, "Data Structures", 1, 3, false));
+		courses.add(new Courses(++coursesCount, "Java OOPs", 1, 3, false));
 	}
 	
 	public Courses save(Courses course) {
-		course.setId(++coursesCount);
+		course.setCourseId(++coursesCount);
 		courses.add(course);
 		return course;
 	}
@@ -28,12 +28,12 @@ public class CoursesDAOService {
 	}
 	
 	public Courses findCourseById(Integer id) {
-		Predicate<? super Courses > predicate = course -> course.getId().equals(id);
+		Predicate<? super Courses > predicate = course -> course.getCourseId().equals(id);
 		return courses.stream().filter(predicate).findFirst().orElse(null);
 	}
 	
 	public void deleteCoursesById(Integer id) {
-		Predicate<? super Courses> predicate = course -> course.getId().equals(id);
+		Predicate<? super Courses> predicate = course -> course.getCourseId().equals(id);
 		courses.removeIf(predicate);
 	}
 }

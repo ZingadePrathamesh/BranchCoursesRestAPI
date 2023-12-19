@@ -1,0 +1,7 @@
+{
+"name": "Computer Networks",
+"branch": 1,
+"semester": 5,
+"isElective": false
+}
+//posting a course in this format
