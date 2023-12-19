@@ -2,6 +2,8 @@ package com.example.APICSEAIMLIOT.courses;
 
 import org.hibernate.validator.constraints.Range;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -9,6 +11,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
+@JsonFilter("Courses")
 @Entity
 public class Courses {
 	

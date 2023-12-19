@@ -1,6 +1,8 @@
 package com.example.APICSEAIMLIOT.courses;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +10,7 @@ import java.util.Optional;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.APICSEAIMLIOT.exception.CourseNotFoundException;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
+import ch.qos.logback.core.filter.Filter;
 import jakarta.validation.Valid;
 
 @RestController
@@ -39,16 +46,48 @@ public class CoursesController {
 		return allCourses;
 	}
 	
-	//Gets you a course that matches the provided id
-	@GetMapping(path = "/courses/{courseId}")
-	public EntityModel<Courses> getCourseById(@PathVariable Integer courseId) {
-		Optional<Courses> course = coursesJpaRepository.findById(courseId);
-		if(course == null) throw new CourseNotFoundException("id: "+ courseId);
-		EntityModel<Courses> entityModel = EntityModel.of(course.get());
-		WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).getCourses());
-		entityModel.add(link.withRel("All Courses:"));
-		return entityModel;
+	@GetMapping(path = "/courses/list")
+	public MappingJacksonValue filteringCourses(){
+		List<Courses> allCourses = coursesJpaRepository.findAll();
+		if(allCourses == null) throw new CourseNotFoundException("No courses available");
+		MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(allCourses,"Courses" ,"name", "courseId");
+		return mappingJacksonValue;
 	}
+	
+	private MappingJacksonValue mappingJacksonValueProvider(List<?> listOfFilterBeanExample, String id ,String...strings ) {
+		MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(listOfFilterBeanExample);
+		
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept(strings);
+		
+		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(id, filter);
+		
+		mappingJacksonValue.setFilters(filterProvider);
+		return mappingJacksonValue;
+	}
+	
+	// This method retrieves a course matching the provided ID.
+	@GetMapping(path = "/courses/{courseId}")
+	public ResponseEntity<EntityModel<Courses>> getCourseById(@PathVariable Integer courseId) {
+
+	    // Search for the course by ID.
+	    Optional<Courses> course = coursesJpaRepository.findById(courseId);
+
+	    // Handle non-existent course.
+	    if (!course.isPresent()) {
+	        throw new CourseNotFoundException("Course with ID " + courseId + " not found.");
+	    }
+
+	    // Build an entity model with the found course.
+	    EntityModel<Courses> entityModel = EntityModel.of(course.get());
+
+	    // Add a link to all courses for convenient navigation.
+	    WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).getCourses());
+	    entityModel.add(link.withRel("All Courses:"));
+
+	    // Return the entity model with a successful status code.
+	    return ResponseEntity.ok(entityModel);
+	}
+
 	
 	
 	//gets you all the courses of specific branch
