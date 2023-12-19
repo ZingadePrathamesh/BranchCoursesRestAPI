@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
-import ch.qos.logback.core.filter.Filter;
 import jakarta.validation.Valid;
 
 @RestController
@@ -40,10 +39,11 @@ public class CoursesController {
 
 	//gets you all the courses
 	@GetMapping(path = "/courses")
-	public List<Courses> getCourses() {		
+	public MappingJacksonValue getCourses() {		
 		List<Courses> allCourses = coursesJpaRepository.findAll();
 		if(allCourses == null) throw new CourseNotFoundException("No courses available");
-		return allCourses;
+		MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(allCourses, "Courses", "courseId", "name", "branch", "semester", "isElective");
+		return mappingJacksonValue;
 	}
 	
 	@GetMapping(path = "/courses/list")
@@ -58,16 +58,23 @@ public class CoursesController {
 		MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(listOfFilterBeanExample);
 		
 		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept(strings);
-		
+
 		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(id, filter);
-		
+
+		mappingJacksonValue.setFilters(filterProvider);
+		return mappingJacksonValue;
+	}
+	private MappingJacksonValue mappingJacksonValueProvider(EntityModel<Courses> course, String id ,String...strings ) {
+		MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(course);
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept(strings);
+		FilterProvider filterProvider = new SimpleFilterProvider().addFilter(id, filter);
 		mappingJacksonValue.setFilters(filterProvider);
 		return mappingJacksonValue;
 	}
 	
 	// This method retrieves a course matching the provided ID.
 	@GetMapping(path = "/courses/{courseId}")
-	public ResponseEntity<EntityModel<Courses>> getCourseById(@PathVariable Integer courseId) {
+	public ResponseEntity<MappingJacksonValue> getCourseById(@PathVariable Integer courseId) {
 
 	    // Search for the course by ID.
 	    Optional<Courses> course = coursesJpaRepository.findById(courseId);
@@ -84,8 +91,10 @@ public class CoursesController {
 	    WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).getCourses());
 	    entityModel.add(link.withRel("All Courses:"));
 
+	    MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(entityModel, "Courses","courseId", "name", "branch", "semester", "isElective");
+	    
 	    // Return the entity model with a successful status code.
-	    return ResponseEntity.ok(entityModel);
+	    return ResponseEntity.ok(mappingJacksonValue);
 	}
 
 	

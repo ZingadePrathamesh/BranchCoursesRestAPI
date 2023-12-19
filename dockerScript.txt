@@ -1,0 +1,1 @@
+docker run --detach --env MYSQL_ROOT_PASSWORD=cseaiml0123 --env MYSQL_USER=cseaiml --env MYSQL_PASSWORD=cseaiml@123 --env MYSQL_DATABASE=department --name mysql_cse --publish 3309:3306 mysql:8-oracle
