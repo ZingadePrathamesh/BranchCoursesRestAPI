@@ -86,7 +86,5 @@ public class Courses {
 		return "Courses [id=" + courseId + ", name=" + name + ", branch Code=" + branch + ", semester=" + semester
 				+ ", isElective=" + isElective + "]";
 	}
-	
-	
 
 }

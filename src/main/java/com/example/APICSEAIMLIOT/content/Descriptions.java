@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class Descriptions {
 	
 	MessageSource messageSource;
+	
 	public Descriptions(MessageSource messageSource) {
 		super();
 		this.messageSource = messageSource;
 	}
-
-
 
 	@GetMapping(path = "/about-us")
 	public String aboutUs() {
