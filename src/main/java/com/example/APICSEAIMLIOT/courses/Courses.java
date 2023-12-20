@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
+//to perform filtering with this class
 @JsonFilter("Courses")
 @Entity
 public class Courses {
@@ -18,8 +19,8 @@ public class Courses {
 	@Id
 	@GeneratedValue
 	private Integer courseId;
-	@Size(min = 2, message = "Enter atleast 2 Characters in name.")
 	
+	@Size(min = 2, message = "Enter atleast 2 Characters in name.")
 	private String  name;
 	
 	@Range(min = 1, max = 2)
