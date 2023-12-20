@@ -72,28 +72,34 @@ public class CoursesController {
 		return mappingJacksonValue;
 	}
 	
-	// This method retrieves a course matching the provided ID.
+
 	@GetMapping(path = "/courses/{courseId}")
 	public ResponseEntity<MappingJacksonValue> getCourseById(@PathVariable Integer courseId) {
 
-	    // Search for the course by ID.
+	    // 1. Search for the course by ID
 	    Optional<Courses> course = coursesJpaRepository.findById(courseId);
 
-	    // Handle non-existent course.
+	    // 2. Handle missing course
 	    if (!course.isPresent()) {
 	        throw new CourseNotFoundException("Course with ID " + courseId + " not found.");
 	    }
 
-	    // Build an entity model with the found course.
-	    EntityModel<Courses> entityModel = EntityModel.of(course.get());
+	    // 3. Extract and wrap the course object
+	    Courses foundCourse = course.get(); // extract the course from Optional
+	    EntityModel<Courses> entityModel = EntityModel.of(foundCourse);
 
-	    // Add a link to all courses for convenient navigation.
+	    // 4. Add link to "All Courses" resource
 	    WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).getCourses());
 	    entityModel.add(link.withRel("All Courses:"));
 
-	    MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(entityModel, "Courses","courseId", "name", "branch", "semester", "isElective");
-	    
-	    // Return the entity model with a successful status code.
+	    // 5. Serialize the entity model with specified properties
+	    MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(
+	        entityModel,
+	        "Courses", // root element name
+	        "courseId", "name", "branch", "semester", "isElective" // serialized properties
+	    );
+
+	    // 6. Return the found course
 	    return ResponseEntity.ok(mappingJacksonValue);
 	}
 
@@ -101,10 +107,33 @@ public class CoursesController {
 	
 	//gets you all the courses of specific branch
 	@GetMapping(path = "/courses/branch/{branch}")
-	public List<Courses> getCoursesOfAiml(@PathVariable Integer branch) {
+	public ResponseEntity<MappingJacksonValue> getCoursesOfAiml(@PathVariable Integer branch) {
 		Optional<List<Courses>> courses = coursesJpaRepository.findAllByBranch(branch);
-		return courses.get();
+		if(courses.isEmpty()) throw new CourseNotFoundException("Courses with branch id: "+ branch +", were not found!");
+		List<Courses> course = courses.get();
+	    MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(
+		        course,
+		        "Courses", // root element name
+		        "courseId", "name", "semester", "isElective" // serialized properties
+		    );
+	    return ResponseEntity.ok(mappingJacksonValue);
 	}
+	
+	//gets you all the courses of specific branch
+	@GetMapping(path = "/courses/semester/{semester}")
+	public ResponseEntity<MappingJacksonValue> getCoursesOfSemester(@PathVariable Integer semester) {
+		Optional<List<Courses>> courses = coursesJpaRepository.findAllBySemester(semester);
+		if(courses.isEmpty()) throw new CourseNotFoundException("Courses with branch id: "+ semester +", were not found!");
+		List<Courses> courseList = courses.get();
+		MappingJacksonValue mappingJacksonValue = mappingJacksonValueProvider(
+				courseList,
+				"Courses", // root element name
+				"courseId", "name", "branch", "semester", "isElective" // serialized properties
+				);
+		return ResponseEntity.ok(mappingJacksonValue);
+	}
+	
+	
 
 	@PostMapping(path = "/courses")
 	public ResponseEntity<Courses> postCourse(@Valid @RequestBody Courses course) {
