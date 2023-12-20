@@ -48,21 +48,21 @@ Branch Courses is a Spring Boot-based RESTful API that manages branch-wise cours
 
 Explore the API using HAL Browser and Swagger OpenAPI documentation. Ensure proper authentication and use the provided features like dynamic filtering, versioning, and more.
 
-Get The resources using the following URL:
-/courses : gets you all the courses available
-/courses/{courseId} : Gets you a specific course based upon the id.
-/Courses/branch/{branch} : gets you all the courses of a branch.
-/courses/semester/{semester} : gets you all the courses of a semester.
-/about-us : gets you a description of the branch in many languages (currently only in french and english)
+- Get The resources using the following URL:
+- /courses : gets you all the courses available
+- /courses/{courseId} : Gets you a specific course based upon the id.
+- /Courses/branch/{branch} : gets you all the courses of a branch.
+- /courses/semester/{semester} : gets you all the courses of a semester.
+- /about-us : gets you a description of the branch in many languages (currently only in french and english)
 
-Post:
-/courses: post a course in a proper format.
+- Post:
+- /courses: post a course in a proper format.
 
-put:
-/courses/{courseId} : Updates a specific course based upon the id.
+- put:
+- /courses/{courseId} : Updates a specific course based upon the id.
 
-Delete:
-/courses/{courseId} : Deletes a specific course based upon the id.
+- Delete:
+- /courses/{courseId} : Deletes a specific course based upon the id.
 
 ## Contribution
 
