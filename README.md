@@ -67,3 +67,5 @@ Explore the API using HAL Browser and Swagger OpenAPI documentation. Ensure prop
 ## Contribution
 
 Contributions are welcome! Feel free to submit issues, feature requests, or pull requests.
+
+Thank you for reading!!
